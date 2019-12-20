@@ -21,6 +21,7 @@ import java.util.List;
 
 import com.netflix.hystrix.HystrixObservableCommand;
 import io.netty.channel.ChannelOption;
+import io.netty.handler.ssl.ClientAuth;
 import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
 import org.apache.commons.logging.Log;
@@ -643,7 +644,11 @@ public class GatewayAutoConfiguration {
 						sslContextBuilder = sslContextBuilder
 								.trustManager(InsecureTrustManagerFactory.INSTANCE);
 					}
-
+					
+					if (ssl.getAuthMode() != null) {
+						sslContextBuilder = sslContextBuilder
+								.clientAuth(ssl.getAuthMode());
+					}
 					try {
 						sslContextBuilder = sslContextBuilder
 								.keyManager(ssl.getKeyManagerFactory());
@@ -651,6 +656,8 @@ public class GatewayAutoConfiguration {
 					catch (Exception e) {
 						logger.error(e);
 					}
+					sslContextBuilder = sslContextBuilder
+							.sslProvider(ssl.getProvider());
 
 					sslContextSpec.sslContext(sslContextBuilder)
 							.defaultConfiguration(ssl.getDefaultConfigurationType())

@@ -41,6 +41,8 @@ import org.springframework.boot.web.server.WebServerException;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.ResourceUtils;
 
+import io.netty.handler.ssl.ClientAuth;
+
 /**
  * Configuration properties for the Netty {@link reactor.netty.http.client.HttpClient}.
  */
@@ -293,6 +295,9 @@ public class HttpClientProperties {
 		 * suitable for production.
 		 */
 		private boolean useInsecureTrustManager = false;
+		
+		/** SSL Provider **/
+		private io.netty.handler.ssl.SslProvider provider;
 
 		/** Trusted certificates for verifying the remote endpoint's certificate. */
 		private List<String> trustedX509Certificates = new ArrayList<>();
@@ -310,6 +315,9 @@ public class HttpClientProperties {
 		/** The default ssl configuration type. Defaults to TCP. */
 		private SslProvider.DefaultConfigurationType defaultConfigurationType = SslProvider.DefaultConfigurationType.TCP;
 
+		/** SSL Client authentication mode **/
+		private ClientAuth authMode;
+		
 		/** Keystore path for Netty HttpClient. */
 		private String keyStore;
 
@@ -324,6 +332,22 @@ public class HttpClientProperties {
 
 		/** Key password, default is same as keyStorePassword. */
 		private String keyPassword;
+		
+		public io.netty.handler.ssl.SslProvider getProvider() {
+			return provider;
+		}
+		
+		public void setProvider(io.netty.handler.ssl.SslProvider provider) {
+			this.provider = provider;
+		}
+		
+		public ClientAuth getAuthMode() {
+			return authMode;
+		}
+		
+		public void setAuthMode(ClientAuth authMode) {
+			this.authMode = authMode;
+		}
 
 		public String getKeyStorePassword() {
 			return keyStorePassword;
@@ -536,7 +560,6 @@ public class HttpClientProperties {
 					.append("defaultConfigurationType", defaultConfigurationType)
 					.toString();
 		}
-
 	}
 
 	public class Websocket {
